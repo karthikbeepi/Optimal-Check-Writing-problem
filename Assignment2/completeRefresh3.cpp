@@ -14,17 +14,24 @@ int array[1001];
 char * fileToRead;
 int allSizes[10001];
 
-//function declaration
 void comboRepeatition(int [], int [], 
 					int , int r, int , int , int , int &, int ) ;
 
-//to convert the number to number of characters
+
+void comboRepetition(int arr[], int n, int r, int a, int &lowestCount, int b) 
+{ 
+	int choose[r+1]; 
+	//cout<<n<<" "<<b<<endl;
+	if(n!=(2*b)+1)
+		return;
+	comboRepeatition(choose, arr, 0, r, 0, n-1, a, lowestCount, b); 
+} 
+
 int convertToWords(int v)
 {
     return allSizes[v];
 }
 
-//calling function
 int findCount(int ar[], int len, int a)
 {
 	int sum =0;
@@ -37,17 +44,6 @@ int findCount(int ar[], int len, int a)
 	return sum;
 }
 
-//find the combinations
-void comboRepetition(int arr[], int n, int r, int a, int &lowestCount, int b) 
-{ 
-	int choose[r+1]; 
-	//cout<<n<<" "<<b<<endl;
-	if(n!=(2*b)+1)
-		return;
-	comboRepeatition(choose, arr, 0, r, 0, n-1, a, lowestCount, b); 
-} 
-
-//get the number values from file cost.txt
 void getCountOfValues()
 {
 	ifstream fout;
@@ -59,8 +55,6 @@ void getCountOfValues()
 		allSizes[temp1]=temp2;
     }
 }
-
-//print the array found to be optimum
 void printArray(int temp[], int period, int amount)
 {
 	//cout<<amount<<","<<period<<":";
@@ -69,14 +63,12 @@ void printArray(int temp[], int period, int amount)
 	cout<<endl;
 }
 
-//copy the array
 void copyArray(int temp[], int r)
 {
 	for(int i=0; i<r; i++)
 		array[i] = temp[i];
 }
 
-//find all the different combinations
 void comboRepeatition(int choose[], int arr[], 
 					int ind, int r, int start, int end, int a, int &lowestCost, int b) 
 { 
@@ -84,10 +76,8 @@ void comboRepeatition(int choose[], int arr[],
     for(int i=0; i<ind; i++)
     {
         sum+=arr[choose[i]];
-		//to check if the balance is not going to negative at all times
         if(sum<0)
             return;
-		//to check if the balance is not going overboard everytime
 		else if(sum>b)
 			return;
     }
@@ -96,7 +86,12 @@ void comboRepeatition(int choose[], int arr[],
 		if(sum==0)
 		{
 			int len = 2*(sizeof(arr)/sizeof(int));
+            sum-=arr[choose[r-1]];
+			if(choose[0]==0||sum==b)
 			{
+				//for(int i=1; i<r-1; i++)
+				// 	if(choose[i]==0||choose[i]==len)
+				// 		return ;
 				int temp1[r];
 				for (int i = 0; i < r; i++) 
 				{
@@ -119,6 +114,9 @@ void comboRepeatition(int choose[], int arr[],
 		return; 
 	} 
 
+	// One by one choose all elements (without considering 
+	// the fact whether element is already choose or not) 
+	// and recur 
 	for (int i = start; i <= end; i++) 
 	{ 
 		choose[ind] = i; 
@@ -155,7 +153,7 @@ int findVal(int periods, int amount, int balance)
 		makeArray(i, arr);
 		int n = sizeof(arr)/sizeof(arr[0]);  
 		cost[i] = INT16_MAX;
-		comboRepetition(arr, n, periods, amount, cost[i], balance); 
+		comboRepetition(arr, n, periods, amount, cost[i], i); 
 		if(i>0)
 			if(cost[i-1]<cost[i])
 				{
